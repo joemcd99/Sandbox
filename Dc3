@@ -1,0 +1,24 @@
+SELECT
+  to_date(
+    concat(
+      substr(opened_date, 1, 2),  -- Day
+      '-',
+      substr(opened_date, 4, 3),  -- Month abbreviation
+      '-',
+      '20',
+      substr(opened_date, 7, 2)   -- Year (last two digits)
+    ),
+    'DD-MON-YYYY'
+  ) AS open_date,
+  to_date(
+    concat(
+      substr(pca_closed_date, 1, 2),
+      '-',
+      substr(pca_closed_date, 4, 3),
+      '-',
+      '20',
+      substr(pca_closed_date, 7, 2)
+    ),
+    'DD-MON-YYYY'
+  ) AS close_date
+FROM your_table; -- Replace 'your_table' with your actual table name
