@@ -1,0 +1,44 @@
+SELECT
+  to_date(
+    concat(
+      substr(opened_date, 7, 4), -- Extract full year
+      '-',
+      lpad(
+        cast(
+          month(
+            to_date(
+              concat('01-', substr(opened_date, 4, 3), '-', substr(opened_date, 7, 4)),
+              'DD-MMM-YYYY'
+            )
+          ) as string
+        ),
+        2,
+        '0'
+      ),
+      '-',
+      substr(opened_date, 1, 2)
+    ),
+    'YYYY-MM-DD'
+  ) AS open_date,
+  to_date(
+    concat(
+      substr(pca_closed_date, 7, 4),
+      '-',
+      lpad(
+        cast(
+          month(
+            to_date(
+              concat('01-', substr(pca_closed_date, 4, 3), '-', substr(pca_closed_date, 7, 4)),
+              'DD-MMM-YYYY'
+            )
+          ) as string
+        ),
+        2,
+        '0'
+      ),
+      '-',
+      substr(pca_closed_date, 1, 2)
+    ),
+    'YYYY-MM-DD'
+  ) AS close_date
+FROM your_table; -- Replace 'your_table' with your actual table name
