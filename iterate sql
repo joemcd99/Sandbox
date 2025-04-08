@@ -1,0 +1,69 @@
+import pyodbc
+import pandas as pd
+
+# --- Configuration ---
+SERVER = 'your_server_name'  # Replace with your SQL server name or IP address
+DATABASE = 'your_database_name'  # Replace with your database name
+USERNAME = 'your_username'  # Replace with your SQL username
+PASSWORD = 'your_password'  # Replace with your SQL password
+DRIVER = '{ODBC Driver 17 for SQL Server}'  # Or your appropriate SQL Server driver
+
+SQL_QUERY = """
+SELECT *
+FROM your_table_name
+WHERE period_column = '{period}'
+"""  # Replace 'your_table_name' and 'period_column'
+PERIODS_TO_FILTER = ['2023-Q1', '2023-Q2', '2023-Q3', '2023-Q4', '2024-Q1']  # Your list of periods
+OUTPUT_EXCEL_FILE = 'output_data.xlsx'
+START_ROW = 0  # Starting row in the Excel sheet for the first period
+
+try:
+    # Establish database connection
+    conn_str = (
+        f'DRIVER={DRIVER};'
+        f'SERVER={SERVER};'
+        f'DATABASE={DATABASE};'
+        f'UID={USERNAME};'
+        f'PWD={PASSWORD};'
+    )
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+
+    writer = pd.ExcelWriter(OUTPUT_EXCEL_FILE, engine='xlsxwriter')
+
+    for period in PERIODS_TO_FILTER:
+        # Format the SQL query with the current period
+        formatted_sql = SQL_QUERY.format(period=period)
+
+        # Execute the SQL query
+        cursor.execute(formatted_sql)
+
+        # Fetch all results
+        columns = [column[0] for column in cursor.description]
+        results = cursor.fetchall()
+
+        if results:
+            # Create a Pandas DataFrame from the results
+            df = pd.DataFrame.from_records(results, columns=columns)
+
+            # Write the DataFrame to the Excel file
+            df.to_excel(writer, sheet_name='Sheet1', startrow=START_ROW, header=(START_ROW == 0), index=False)
+
+            # Update the starting row for the next period's results
+            START_ROW += len(df) + 2  # Add 2 for a blank row between periods
+        else:
+            print(f"No data found for period: {period}")
+
+    # Save the Excel file
+    writer.close()
+    print(f"Results saved to: {OUTPUT_EXCEL_FILE}")
+
+except pyodbc.Error as ex:
+    sqlstate = ex.args[0]
+    print(f"Database error occurred: {sqlstate}")
+    print(ex)
+
+finally:
+    # Close the database connection
+    if cnxn:
+        cnxn.close()
