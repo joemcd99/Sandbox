@@ -1,0 +1,53 @@
+import pandas as pd
+from openpyxl import load_workbook
+
+def expand_and_save_excel(input_file, output_file="output_expanded.xlsx"):
+    """
+    Opens an Excel file, reads each sheet, attempts to auto-adjust column widths,
+    and saves the result to a new Excel file.
+
+    Args:
+        input_file (str): Path to the input Excel file.
+        output_file (str): Path to the output Excel file.
+    """
+    try:
+        xls = pd.ExcelFile(input_file)
+        sheet_names = xls.sheet_names
+
+        writer = pd.ExcelWriter(output_file, engine='openpyxl')
+
+        for sheet_name in sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet_name)
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+        writer.close()  # Save the initial DataFrames
+
+        # Open the saved file with openpyxl to adjust column widths
+        workbook = load_workbook(output_file)
+        for sheet_name in workbook.sheetnames:
+            sheet = workbook[sheet_name]
+            for column_cells in sheet.columns:
+                max_len = 0
+                for cell in column_cells:
+                    try:
+                        if cell.value is not None and len(str(cell.value)) > max_len:
+                            max_len = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = (max_len + 2)  # Add some padding
+                sheet.column_dimensions[column_cells[0].column_letter].width = adjusted_width
+
+        workbook.save(output_file)
+        print(f"Processed '{input_file}' and saved with attempted column auto-adjustment to '{output_file}'")
+
+    except FileNotFoundError:
+        print(f"Error: File not found at '{input_file}'")
+    except ImportError:
+        print("Error: Please install the 'openpyxl' library (pip install openpyxl)")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    input_excel_file = "your_input_file.xlsx"  # Replace with your input file path
+    output_excel_file = "expanded_output.xlsx"
+    expand_and_save_excel(input_excel_file, output_excel_file)
