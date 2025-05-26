@@ -1,0 +1,6 @@
+SELECT 
+  DATEADD(DAY, -1 * ((DATEPART(WEEKDAY, your_date_column) + @@DATEFIRST - 7) % 7), your_date_column) AS week_start,
+  COUNT(*) AS record_count
+FROM your_table
+GROUP BY DATEADD(DAY, -1 * ((DATEPART(WEEKDAY, your_date_column) + @@DATEFIRST - 7) % 7), your_date_column)
+ORDER BY week_start;
