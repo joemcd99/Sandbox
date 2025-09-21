@@ -1,4 +1,0 @@
-replace(replace(replace(replace(replace(replace(replace(replace(
-    replace(replace(replace(replace(replace(upper(legal_name), '-', ''), '/', ''), '\', ''), ',', ''), '.', ''), ';', ''), '_', ''), '''', ''),
-    '(', ''), ')', ''), '[', ''), ']', ''), '&', '')
-as legal_name

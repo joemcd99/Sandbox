@@ -1,8 +1,0 @@
-with pd.ExcelWriter(excel_file, engine='openpyxl', mode='w') as writer:
-    for date_str in date_list:
-        query = base_query.format(date=date_str)
-        df = pd.read_sql_query(query, engine)
-
-        if not df.empty:
-            sheet_name = f"Data_{date_str.replace('-', '')[:31]}"
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
