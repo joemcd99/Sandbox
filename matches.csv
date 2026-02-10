@@ -1,0 +1,4 @@
+Original Name (A),Matched Name (B),Score,Method,Index A,Index B
+John Smith,"Smith, John",95.23809523809524,token_set,0,0
+Robert Johnson,Bob Johnson,80.0,token_set,2,2
+Emily Davis,Emily J. Davis,100.0,token_set,4,4
