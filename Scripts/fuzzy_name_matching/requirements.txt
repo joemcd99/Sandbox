@@ -1,2 +1,5 @@
-rapidfuzz
 pandas
+rapidfuzz
+nameparser
+jellyfish
+Unidecode
