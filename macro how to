@@ -1,0 +1,32 @@
+Created ExcelToPowerPoint.bas module for Excel-to-PowerPoint conversion
+Created ExcelToPowerPoint.bas module for Excel-to-PowerPoint conversion
+
+Saved to ExcelToPowerPoint.bas. Here's how to use it:
+
+Setup (one-time)
+Open your Excel workbook
+Alt+F11 to open the VBA editor
+File → Import File → select ExcelToPowerPoint.bas
+Close the VBA editor
+Configure
+Edit the SheetConfig() function at the top — add/remove entries to match your tab names:
+
+SheetConfig = Array( _
+    Array("Sales Summary",  "Sales Summary"), _
+    Array("Revenue Chart",  "Revenue Analysis"), _
+    Array("KPIs",           "") _   ' empty string = no title bar
+)
+
+Run
+Alt+F8 → select ExportToPowerPoint → Run
+
+Output saves automatically next to your workbook as <WorkbookName>_slides.pptx.
+
+What it handles
+Content	How
+Tables with cell formatting, colors, borders	CopyPicture — exact screen render
+Embedded charts in a worksheet	Captured in the same picture
+Chart sheets (standalone chart tabs)	Uses ChartArea.Copy instead
+Objects/images that extend past the data range	ExpandRangeToObjects grows the copy area to include them
+Varying sizes	Scales each slide's picture uniformly to fill the slide
+Note: Save your workbook as .xlsm (macro-enabled) if you want to keep the macro inside the file. Otherwise, the .bas file is the portable version you can re-import anytime.
